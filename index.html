@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaf Split — Coming Soon</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/svg+xml" href='data:image/svg+xml;utf8, <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path fill="%233DD08A" stroke="%233DD08A" stroke-width="2" d="M32 4C20 10 10 24 10 36s8 24 22 24c14 0 22-12 22-24S44 10 32 4zM32 10c8 6 12 16 12 26 0 8-4 16-12 16s-12-8-12-16c0-10 4-20 12-26z"/></svg>'>
+  <style>
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      color: white;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top left, #0a0a0a, #000);
+      scroll-behavior: smooth;
+    }
+    .glass {
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.4s ease-in-out;
+    }
+    .glass:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+      transform: scale(1.03);
+    }
+    .neon-text {
+      text-shadow: 0 0 10px #3DD08A, 0 0 20px #3DD08A;
+      animation: fadeIn 1.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .background-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -2;
+      background: radial-gradient(circle, rgba(61,208,138,0.05) 0%, transparent 70%),
+                  radial-gradient(circle at 70% 20%, rgba(61,208,138,0.08) 0%, transparent 60%),
+                  radial-gradient(circle at 30% 80%, rgba(61,208,138,0.04) 0%, transparent 60%);
+      animation: moveBackground 18s infinite alternate ease-in-out;
+    }
+    @keyframes moveBackground {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(30px, -30px) scale(1.05); }
+      100% { transform: translate(-20px, 20px) scale(1); }
+    }
+
+    .bubble {
+      position: absolute;
+      bottom: -100px;
+      background: rgba(61, 208, 138, 0.1);
+      border-radius: 50%;
+      filter: blur(6px);
+      animation: rise 10s infinite ease-in;
+    }
+    @keyframes rise {
+      0% { transform: translateY(0) scale(1); opacity: 0.3; }
+      50% { opacity: 0.6; }
+      100% { transform: translateY(-110vh) scale(1.4); opacity: 0; }
+    }
+
+    a { transition: all 0.3s ease-in-out; cursor: pointer; }
+    a:hover { transform: translateY(-2px); filter: drop-shadow(0 0 6px rgba(61, 208, 138, 0.6)); }
+
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+          });
+        });
+      });
+    });
+  </script>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center text-center px-4">
+  <div class="background-animation">
+    <div class="bubble" style="left:10%; width:80px; height:80px; animation-delay:0s;"></div>
+    <div class="bubble" style="left:30%; width:40px; height:40px; animation-delay:1s;"></div>
+    <div class="bubble" style="left:50%; width:100px; height:100px; animation-delay:2s;"></div>
+    <div class="bubble" style="left:70%; width:60px; height:60px; animation-delay:3s;"></div>
+    <div class="bubble" style="left:85%; width:50px; height:50px; animation-delay:4s;"></div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="flex flex-col items-center justify-center h-screen space-y-6 animate-fadeIn">
+    <h1 class="text-5xl md:text-7xl font-bold neon-text">Leaf Split</h1>
+    <p class="text-xl md:text-2xl text-gray-300 max-w-2xl">The future of AI training — <span class="text-[#3DD08A] font-semibold">coming soon</span>.</p>
+    <p class="text-gray-400 max-w-xl">Train neural networks <span class="text-white font-semibold">40× faster</span>, achieve <span class="text-white font-semibold">99%+ accuracy</span>, and use fewer resources than ever before.</p>
+    <div class="mt-6 flex flex-col sm:flex-row gap-4">
+      <a href="https://www.linkedin.com/company/leafsplit/?viewAsMember=true" target="_blank" class="bg-[#3DD08A] hover:bg-[#35b07a] text-black font-semibold px-6 py-3 rounded-full transition-all duration-300 shadow-lg">Follow us on LinkedIn</a>
+      <a href="#contact" class="glass border border-[#3DD08A]/30 hover:bg-[#3DD08A]/10 text-white font-semibold px-6 py-3 rounded-full transition-all duration-300">Contact Us</a>
+      <a href="proof.html" class="glass border border-[#3DD08A]/50 hover:bg-[#3DD08A]/10 text-white font-semibold px-8 py-3 rounded-full transition-all duration-300">See the Proof</a>
+    </div>
+  </section>
+
+  <!-- Short Explanation -->
+  <section class="glass rounded-2xl py-16 px-6 md:px-12 max-w-4xl my-20">
+    <h2 class="text-3xl font-bold mb-6 animate-fadeIn">No datacenters. No waiting. Instant precision.</h2>
+    <p class="text-gray-300 text-lg leading-relaxed">Leaf Split redefines AI training with revolutionary speed and unmatched efficiency. Whether you're a startup or an enterprise, experience AI that learns in seconds, not hours.</p>
+  </section>
+
+  <!-- Features -->
+  <section class="grid md:grid-cols-3 gap-6 max-w-5xl mb-20">
+    <div class="glass rounded-2xl p-6 hover:scale-105 transition-transform duration-500">
+      <h3 class="text-[#3DD08A] text-xl font-semibold mb-2">40× Faster</h3>
+      <p class="text-gray-300">Train massive models at unprecedented speed with next-gen optimization.</p>
+    </div>
+    <div class="glass rounded-2xl p-6 hover:scale-105 transition-transform duration-500">
+      <h3 class="text-[#3DD08A] text-xl font-semibold mb-2">99%+ Accuracy</h3>
+      <p class="text-gray-300">Achieve perfect precision without compromising efficiency or resources.</p>
+    </div>
+    <div class="glass rounded-2xl p-6 hover:scale-105 transition-transform duration-500">
+      <h3 class="text-[#3DD08A] text-xl font-semibold mb-2">Zero Waste</h3>
+      <p class="text-gray-300">Save energy, reduce cost — and build sustainable, high-performing AI.</p>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="text-center mb-20">
+    <h2 class="text-3xl font-bold mb-4">Get in Touch</h2>
+    <p class="text-gray-400 mb-6">We’d love to hear from you. Reach out at <a href="mailto:info@leafsplit.com" class="text-[#3DD08A] hover:underline">info@leafsplit.com</a></p>
+    <a href="https://www.linkedin.com/company/leafsplit/?viewAsMember=true" target="_blank" class="bg-[#3DD08A] hover:bg-[#35b07a] text-black font-semibold px-6 py-3 rounded-full transition-all duration-300 shadow-lg">Connect on LinkedIn</a>
+  </section>
+
+  <footer class="text-gray-600 text-sm py-6 border-t border-gray-800 w-full text-center">
+    © 2025 Leaf Split — All rights reserved. <br>
+    <a href="https://www.linkedin.com/company/leafsplit/?viewAsMember=true" target="_blank" class="text-[#3DD08A] hover:underline">Follow us on LinkedIn</a>
+  </footer>
+</body>
+</html>
