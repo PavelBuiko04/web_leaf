@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MNIST Dataset — Parameter Efficiency at Scale</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/svg+xml" href='data:image/svg+xml;utf8, <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path fill="%233DD08A" stroke="%233DD08A" stroke-width="2" d="M32 4C20 10 10 24 10 36s8 24 22 24c14 0 22-12 22-24S44 10 32 4zM32 10c8 6 12 16 12 26 0 8-4 16-12 16s-12-8-12-16c0-10 4-20 12-26z"/></svg>'>
+  <style>
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      color: white;
+      font-family: 'Inter', sans-serif;
+      scroll-behavior: smooth;
+      background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
+    }
+    .background-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background: radial-gradient(circle, rgba(61,208,138,0.05) 0%, transparent 70%),
+                  radial-gradient(circle at 70% 20%, rgba(61,208,138,0.08) 0%, transparent 60%),
+                  radial-gradient(circle at 30% 80%, rgba(61,208,138,0.04) 0%, transparent 60%);
+      animation: moveBackground 20s infinite alternate ease-in-out;
+    }
+    @keyframes moveBackground {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(25px, -25px) scale(1.05); }
+      100% { transform: translate(-20px, 20px) scale(1); }
+    }
+    .bubble {
+      position: absolute;
+      bottom: -100px;
+      background: rgba(61, 208, 138, 0.1);
+      border-radius: 50%;
+      filter: blur(6px);
+      animation: rise 12s infinite ease-in;
+    }
+    @keyframes rise {
+      0% { transform: translateY(0) scale(1); opacity: 0.3; }
+      50% { opacity: 0.6; }
+      100% { transform: translateY(-110vh) scale(1.4); opacity: 0; }
+    }
+    .glass {
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.5s ease;
+    }
+    .glass:hover {
+      transform: scale(1.01);
+      border-color: rgba(61, 208, 138, 0.4);
+    }
+    .neon-text {
+      text-shadow: 0 0 10px #3DD08A, 0 0 20px #3DD08A;
+      animation: fadeIn 2s ease-in-out;
+    }
+    .neon-white {
+      text-shadow: 0 0 5px rgba(255,255,255,0.6), 0 0 10px rgba(255,255,255,0.3);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    table { border-collapse: collapse; }
+    .data-table th {
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.9rem 1rem;
+      border-bottom: 1px solid rgba(61, 208, 138, 0.3);
+      text-align: left;
+    }
+    .data-table td {
+      padding: 0.9rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr.highlight td { background: rgba(61, 208, 138, 0.06); }
+    .data-table tr:hover td { background: rgba(61, 208, 138, 0.08); }
+    @media (max-width: 768px) {
+      h1 { font-size: 2.2rem; }
+      h2 { font-size: 1.5rem; }
+      section { padding: 1rem; }
+      .glass { padding: 1rem; }
+    }
+    @media (max-width: 480px) {
+      h1 { font-size: 1.8rem; }
+      h2 { font-size: 1.3rem; }
+      p { font-size: 0.9rem; }
+      footer { font-size: 0.7rem; }
+    }
+  </style>
+</head>
+<body class="text-center min-h-screen px-4">
+  <div class="background-animation">
+    <div class="bubble" style="left:15%; width:80px; height:80px; animation-delay:0s;"></div>
+    <div class="bubble" style="left:35%; width:50px; height:50px; animation-delay:2s;"></div>
+    <div class="bubble" style="left:55%; width:100px; height:100px; animation-delay:4s;"></div>
+    <div class="bubble" style="left:75%; width:60px; height:60px; animation-delay:6s;"></div>
+  </div>
+
+  <section class="min-h-[50vh] flex flex-col items-center justify-center space-y-6 animate-fadeIn px-4 text-center">
+    <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold neon-text">MNIST Dataset</h1>
+    <p class="text-gray-300 text-base sm:text-lg md:text-xl max-w-3xl">Testing how far parameter compression can go on a non-linear, higher-dimensional benchmark.</p>
+    <p class="text-gray-500 text-sm italic">Published: August 2026</p>
+  </section>
+
+  <section class="max-w-5xl mx-auto glass rounded-2xl p-6 sm:p-8 md:p-12 lg:p-16 mb-12 text-left">
+    <h2 class="text-2xl sm:text-3xl font-bold text-[#3DD08A] mb-6 text-center">Setup</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-base sm:text-lg text-center">
+      <div>
+        <p class="text-gray-400 uppercase text-sm tracking-widest mb-2">Classes</p>
+        <p class="text-white font-semibold">10</p>
+      </div>
+      <div>
+        <p class="text-gray-400 uppercase text-sm tracking-widest mb-2">Samples</p>
+        <p class="text-white font-semibold">500 (50/class)</p>
+      </div>
+      <div>
+        <p class="text-gray-400 uppercase text-sm tracking-widest mb-2">Split</p>
+        <p class="text-white font-semibold">70 / 15 / 15</p>
+      </div>
+      <div>
+        <p class="text-gray-400 uppercase text-sm tracking-widest mb-2">Epochs / LR / Batch</p>
+        <p class="text-white font-semibold">50 / 0.005 / 32</p>
+      </div>
+    </div>
+
+    <div class="mt-8 bg-[#1a1a1a] rounded-xl p-4 sm:p-6 border border-[#3DD08A]/30">
+      <h3 class="text-[#3DD08A] text-lg sm:text-xl font-semibold mb-2">Core Finding</h3>
+      <p class="text-gray-300 text-sm sm:text-base leading-relaxed">Boolear v8 with L=12 achieves <span class="text-white font-semibold">64.3% test accuracy</span> using <span class="text-[#3DD08A] font-semibold">140 parameters</span> — against Linear Softmax's 70.0% test accuracy with <span class="text-[#3DD08A] font-semibold">7,850 parameters</span>. That is <span class="text-white font-semibold">91% of the baseline performance</span> at <span class="text-[#3DD08A] font-semibold">1.8% of the parameter count</span> — a <span class="text-[#3DD08A] font-semibold">56× compression</span>.</p>
+    </div>
+  </section>
+
+  <section class="max-w-5xl mx-auto glass rounded-2xl p-6 sm:p-8 md:p-12 mb-12 text-left overflow-x-auto">
+    <h2 class="text-2xl sm:text-3xl font-bold text-[#3DD08A] mb-6 text-center">Results — Increasing Depth (L)</h2>
+    <table class="data-table w-full min-w-[560px]">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Params</th>
+          <th>Test Acc</th>
+          <th>Train→Test Gap</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-white font-semibold">Linear Softmax</td>
+          <td class="text-white font-semibold neon-white">7,850</td>
+          <td class="text-[#3DD08A] font-semibold">70.0%</td>
+          <td>13.7 pp</td>
+          <td>0.2s</td>
+        </tr>
+        <tr>
+          <td class="text-white font-semibold">Leaf L8</td>
+          <td>100</td>
+          <td>51.4%</td>
+          <td>7.4 pp</td>
+          <td>174s</td>
+        </tr>
+        <tr class="highlight">
+          <td class="text-white font-semibold">Leaf L12 <span class="text-[#3DD08A] text-xs font-normal align-middle ml-1">(best)</span></td>
+          <td class="text-white font-semibold neon-white">140</td>
+          <td class="text-[#3DD08A] font-semibold">64.3%</td>
+          <td>5.1 pp</td>
+          <td>257s</td>
+        </tr>
+        <tr>
+          <td class="text-white font-semibold">Leaf L16</td>
+          <td>180</td>
+          <td>55.7%</td>
+          <td>14.6 pp</td>
+          <td>269s</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="max-w-5xl mx-auto glass rounded-2xl p-6 sm:p-8 md:p-12 mb-12 text-left">
+    <h2 class="text-2xl sm:text-3xl font-bold text-[#3DD08A] mb-6 text-center">Tendencies with Increasing Depth</h2>
+    <ul class="space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed list-disc list-inside">
+      <li><span class="text-white font-semibold">L=8 → L=12:</span> test accuracy jumps +12.9 pp. The model is still underfitting at L=8 — more depth genuinely helps it learn.</li>
+      <li><span class="text-white font-semibold">L=12 → L=16:</span> test accuracy drops 8.6 pp despite train/val both rising. The model starts to overfit. The train→test gap nearly triples (5.1 pp → 14.6 pp). With only 500 samples, 180 parameters is apparently past the capacity sweet spot for this setting.</li>
+      <li>Training time grows roughly proportionally to L, but L=12→L=16 shows diminishing returns in time too (257s → 269s, small difference, but accuracy regresses).</li>
+    </ul>
+  </section>
+
+  <section class="max-w-5xl mx-auto glass rounded-2xl p-6 sm:p-8 md:p-12 mb-12 text-left">
+    <h2 class="text-2xl sm:text-3xl font-bold text-[#3DD08A] mb-6 text-center">What Makes This Interesting</h2>
+    <p class="text-gray-300 text-sm sm:text-base leading-relaxed">The v8 architecture has no dedicated output weight matrix — the 10-lit expectation values directly become the 10 class logits (plus a 10-element bias). All 140 parameters at L=12 are rotation angles on a 1024-dimensional state vector. The model encodes 784 MNIST features into a quantum-amplitude state and extracts classification signal purely through learned rotations. The fact that this reaches 64% with so few parameters suggests the amplitude encoding is doing genuine work as a structured prior.</p>
+    <p class="text-gray-300 text-sm sm:text-base leading-relaxed mt-4">The remaining gap to linear (64% vs 70%) appears to be a depth/capacity trade-off: more layers overfit at this dataset size, suggesting the architecture needs either more data, regularization, or a smarter way to scale beyond L=12 without overfitting.</p>
+  </section>
+
+  <section class="max-w-5xl mx-auto glass rounded-2xl p-6 sm:p-8 md:p-12 mb-20 text-left">
+    <h2 class="text-2xl sm:text-3xl font-bold text-[#3DD08A] mb-6 text-center">Wine vs. MNIST</h2>
+    <ul class="space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed list-disc list-inside">
+      <li><span class="text-white font-semibold">Wine</span> is essentially linearly separable in 13-feature space — even 16 parameters can capture the geometry. The amplitude encoding fits 13 features into 16 amplitude slots (3 zeros padding), and v8's learned rotations are sufficient to separate the three classes. There is no information-theoretic gap to close.</li>
+      <li><span class="text-white font-semibold">MNIST</span>, by contrast, has 784 features and non-linear class structure — there the gap between v8 and linear becomes visible, and the compression/accuracy trade-off becomes the central question.</li>
+      <li>Together, the two datasets sketch the boundary of where amplitude encoding works without compromise (wine) and where it starts to cost accuracy (MNIST at 500 samples) — while consistently requiring 1–2 orders of magnitude fewer parameters.</li>
+    </ul>
+  </section>
+
+  <section class="text-center mb-20 px-4 flex flex-wrap gap-4 justify-center">
+    <a href="wine_dataset.html" class="glass border border-[#3DD08A]/50 hover:bg-[#3DD08A]/10 text-white font-semibold px-6 sm:px-8 py-2 sm:py-3 rounded-full transition-all duration-300">← Wine Dataset</a>
+    <a href="proof.html" class="bg-[#3DD08A] hover:bg-[#35b07a] text-black font-semibold px-6 sm:px-8 py-2 sm:py-3 rounded-full transition-all duration-300 shadow-lg">Back to Proof</a>
+  </section>
+
+  <footer class="text-gray-600 text-xs sm:text-sm py-6 border-t border-gray-800 w-full text-center px-4">
+    © 2025 Leaf Split — Published August 2026 — All rights reserved.
+  </footer>
+</body>
+</html>

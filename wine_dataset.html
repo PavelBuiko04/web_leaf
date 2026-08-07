@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wine Dataset — Model Comparison</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/svg+xml" href='data:image/svg+xml;utf8, <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path fill="%233DD08A" stroke="%233DD08A" stroke-width="2" d="M32 4C20 10 10 24 10 36s8 24 22 24c14 0 22-12 22-24S44 10 32 4zM32 10c8 6 12 16 12 26 0 8-4 16-12 16s-12-8-12-16c0-10 4-20 12-26z"/></svg>'>
+  <style>
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      color: white;
+      font-family: 'Inter', sans-serif;
+      scroll-behavior: smooth;
+      background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
+    }
+    .background-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background: radial-gradient(circle, rgba(61,208,138,0.05) 0%, transparent 70%),
+                  radial-gradient(circle at 70% 20%, rgba(61,208,138,0.08) 0%, transparent 60%),
+                  radial-gradient(circle at 30% 80%, rgba(61,208,138,0.04) 0%, transparent 60%);
+      animation: moveBackground 20s infinite alternate ease-in-out;
+    }
+    @keyframes moveBackground {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(25px, -25px) scale(1.05); }
+      100% { transform: translate(-20px, 20px) scale(1); }
+    }
+    .bubble {
+      position: absolute;
+      bottom: -100px;
+      background: rgba(61, 208, 138, 0.1);
+      border-radius: 50%;
+      filter: blur(6px);
+      animation: rise 12s infinite ease-in;
+    }
+    @keyframes rise {
+      0% { transform: translateY(0) scale(1); opacity: 0.3; }
+      50% { opacity: 0.6; }
+      100% { transform: translateY(-110vh) scale(1.4); opacity: 0; }
+    }
+    .glass {
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.5s ease;
+    }
+    .glass:hover {
+      transform: scale(1.01);
+      border-color: rgba(61, 208, 138, 0.4);
+    }
+    .neon-text {
+      text-shadow: 0 0 10px #3DD08A, 0 0 20px #3DD08A;
+      animation: fadeIn 2s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    table { border-collapse: collapse; }
+    .data-table th {
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.9rem 1rem;
+      border-bottom: 1px solid rgba(61, 208, 138, 0.3);
+      text-align: left;
+    }
+    .data-table td {
+      padding: 0.9rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr.highlight td { background: rgba(61, 208, 138, 0.06); }
+    .data-table tr:hover td { background: rgba(61, 208, 138, 0.08); }
+    @media (max-width: 768px) {
+      h1 { font-size: 2.2rem; }
+      h2 { font-size: 1.5rem; }
+      section { padding: 1rem; }
+      .glass { padding: 1rem; }
+    }
+    @media (max-width: 480px) {
+      h1 { font-size: 1.8rem; }
+      h2 { font-size: 1.3rem; }
+      p { font-size: 0.9rem; }
+      footer { font-size: 0.7rem; }
+    }
+  </style>
+</head>
+<body class="text-center min-h-screen px-4">
+  <div class="background-animation">
+    <div class="bubble" style="left:15%; width:80px; height:80px; animation-delay:0s;"></div>
+    <div class="bubble" style="left:35%; width:50px; height:50px; animation-delay:2s;"></div>
+    <div class="bubble" style="left:55%; width:100px; height:100px; animation-delay:4s;"></div>
+    <div class="bubble" style="left:75%; width:60px; height:60px; animation-delay:6s;"></div>
+  </div>
+
+  <section class="min-h-[50vh] flex flex-col items-center justify-center space-y-6 animate-fadeIn px-4 text-center">
+    <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold neon-text">Wine Dataset</h1>
+    <p class="text-gray-300 text-base sm:text-lg md:text-xl max-w-3xl">Parameter efficiency across Linear Softmax and Boolear architectures on a classical, linearly separable benchmark.</p>
+    <p class="text-gray-500 text-sm italic">Published: August 2026</p>
+  </section>
+
+  <section class="max-w-5xl mx-auto glass rounded-2xl p-6 sm:p-8 md:p-12 lg:p-16 mb-12 text-left">
+    <h2 class="text-2xl sm:text-3xl font-bold text-[#3DD08A] mb-6 text-center">Setup</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-base sm:text-lg text-center md:text-left">
+      <div>
+        <p class="text-gray-400 uppercase text-sm tracking-widest mb-2">Dataset</p>
+        <p class="text-white font-semibold">Wine (UCI)</p>
+      </div>
+      <div>
+        <p class="text-gray-400 uppercase text-sm tracking-widest mb-2">Features / Classes</p>
+        <p class="text-white font-semibold">13 features, 3 classes</p>
+      </div>
+      <div>
+        <p class="text-gray-400 uppercase text-sm tracking-widest mb-2">Samples</p>
+        <p class="text-white font-semibold">~178</p>
+      </div>
+    </div>
+
+    <div class="mt-8 bg-[#1a1a1a] rounded-xl p-4 sm:p-6 border border-[#3DD08A]/30">
+      <h3 class="text-[#3DD08A] text-lg sm:text-xl font-semibold mb-2">Headline Result</h3>
+      <p class="text-gray-300 text-sm sm:text-base leading-relaxed">All three models reach <span class="text-white font-semibold">100% test accuracy</span>. The question is just how many parameters it takes to get there.</p>
+    </div>
+  </section>
+
+  <section class="max-w-5xl mx-auto glass rounded-2xl p-6 sm:p-8 md:p-12 mb-12 text-left overflow-x-auto">
+    <h2 class="text-2xl sm:text-3xl font-bold text-[#3DD08A] mb-6 text-center">Results</h2>
+    <table class="data-table w-full min-w-[500px]">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Params</th>
+          <th>Train</th>
+          <th>Val</th>
+          <th>Test</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-white font-semibold">Linear Softmax</td>
+          <td>42</td>
+          <td>97.6%</td>
+          <td>100%</td>
+          <td class="text-[#3DD08A] font-semibold">100%</td>
+        </tr>
+        <tr>
+          <td class="text-white font-semibold">Leaf V6</td>
+          <td>27</td>
+          <td>97.6%</td>
+          <td>100%</td>
+          <td class="text-[#3DD08A] font-semibold">100%</td>
+        </tr>
+        <tr class="highlight">
+          <td class="text-white font-semibold">Leaf V8 <span class="text-[#3DD08A] text-xs font-normal align-middle ml-1">(most compact)</span></td>
+          <td>16</td>
+          <td>94.4%</td>
+          <td>96.3%</td>
+          <td class="text-[#3DD08A] font-semibold">100%</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="max-w-5xl mx-auto glass rounded-2xl p-6 sm:p-8 md:p-12 mb-20 text-left">
+    <h2 class="text-2xl sm:text-3xl font-bold text-[#3DD08A] mb-6 text-center">Tendencies</h2>
+    <ul class="space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed list-disc list-inside">
+      <li><span class="text-white font-semibold">Leaf V8 achieves identical test accuracy with 16 parameters</span> — 2.6× fewer than Linear (42), 1.7× fewer than Leaf V6 (27). This is the most compact model.</li>
+      <li>Leaf V8 appears to <span class="text-white font-semibold">underfit on train/val</span> (94.4% train vs 97.6% for the others, 96.3% val vs 100%), yet generalizes perfectly on the test set. This is a meaningful signal: the model hasn't memorized the training distribution but has learned something structurally correct about the class boundaries.</li>
+      <li>Leaf V6 matches Linear exactly on all three splits despite having <span class="text-white font-semibold">37% fewer parameters</span> — they find the same decision boundary through different means.</li>
+    </ul>
+  </section>
+
+  <section class="text-center mb-20 px-4 flex flex-wrap gap-4 justify-center">
+    <a href="mnist_dataset.html" class="bg-[#3DD08A] hover:bg-[#35b07a] text-black font-semibold px-6 sm:px-8 py-2 sm:py-3 rounded-full transition-all duration-300 shadow-lg">Next: MNIST Dataset →</a>
+    <a href="proof.html" class="glass border border-[#3DD08A]/50 hover:bg-[#3DD08A]/10 text-white font-semibold px-6 sm:px-8 py-2 sm:py-3 rounded-full transition-all duration-300">← Back to Proof</a>
+  </section>
+
+  <footer class="text-gray-600 text-xs sm:text-sm py-6 border-t border-gray-800 w-full text-center px-4">
+    © 2025 Leaf Split — Published August 2026 — All rights reserved.
+  </footer>
+</body>
+</html>

@@ -109,26 +109,28 @@
         <p class="text-white font-semibold mb-6">Apple M1 Pro (16-core GPU, Metal / MPS acceleration)</p>
 
         <p class="text-gray-400 uppercase text-sm tracking-widest mb-2">Model Parameters</p>
-        <p class="text-white font-semibold mb-6"> ~ 4k</p>
+         <p class="text-white font-semibold mb-2">Classical Model: ~ 9.4k</p>
+        <p class="text-white font-semibold mb-6">LeafNet Model: ~ 1.4k</p>
       </div>
       <div>
         <p class="text-gray-400 uppercase text-sm tracking-widest mb-2">Accuracy</p>
-        <p class="text-white font-semibold mb-2">Classical Model: 98% (After 15th epoch)</p>
-        <p class="text-white font-semibold mb-6">LeafLib Model: 99.96% (After 1st epoch)  </p>
+        <p class="text-white font-semibold mb-2">Classical Model: 83% (After 7th epoch)</p>
+        <p class="text-white font-semibold mb-6">LeafNet Model: 100% (After 2st epoch)  </p>
 
         <!-- <p class="text-gray-400 uppercase text-sm tracking-widest mb-2">Energy Efficiency</p>
         <p class="text-white font-semibold mb-6">LeafLib consumes 60% less GPU time</p> -->
 
         <p class="text-gray-400 uppercase text-sm tracking-widest mb-2">Training Time</p>
         <p class="text-white font-semibold mb-2">Classical Model: ~0.2s per train</p>
-        <p class="text-white font-semibold mb-6">LeafLib Model: ~4s per train</p>
+        <p class="text-white font-semibold mb-6">LeafNet Model: ~4s per train</p>
 
       </div>
     </div>
 
     <div class="mt-8 bg-[#1a1a1a] rounded-xl p-4 sm:p-6 border border-[#3DD08A]/30">
       <h3 class="text-[#3DD08A] text-lg sm:text-xl font-semibold mb-2">⚠ Important Notice</h3>
-      <p class="text-gray-300 text-sm sm:text-base leading-relaxed">Training time for LeafNet v1.0 is not fully optimized and will be improved in future versions. The next step is to make time consuming computation in low-level programing language instead of Python.</p>
+      <p class="text-gray-300 text-sm sm:text-base leading-relaxed mb-1">1. Training time for LeafNet v1.0 is not fully optimized and will be improved in future versions. The next step is to make time consuming computation in low-level programing language instead of Python.</p>
+      <p class="text-gray-300 text-sm sm:text-base leading-relaxed">2. LeafNet has logarithmic parameters grouth that is why it will always smaller amout of parameters.</p>
     </div>
   </section>
 
